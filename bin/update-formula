@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Regenerate Formula/sweep.rb for a released version by pulling each
+# platform binary's .sha256 sidecar from the GitHub release.
+#
+#   bin/update-formula 0.4.0
+#
+set -euo pipefail
+
+version="${1:?usage: update-formula <version>}"
+tag="v${version}"
+repo="KitsuneKode/sweep"
+formula="$(cd "$(dirname "$0")/.." && pwd)/Formula/sweep.rb"
+
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+
+i=0
+declare -a sums
+for id in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
+  url="https://github.com/${repo}/releases/download/${tag}/sweep-${id}.sha256"
+  line="$(curl -fsSL "$url")" || { echo "missing checksum asset: $url" >&2; exit 1; }
+  sum="${line%% *}"
+  [[ "$sum" =~ ^[0-9a-f]{64}$ ]] || { echo "bad checksum for $id: $sum" >&2; exit 1; }
+  sums[$i]="$sum"
+  i=$((i + 1))
+done
+
+# Order matches the formula stanza: darwin-arm64, darwin-x64, linux-arm64,
+# linux-x64. Works whether sha256 fields hold placeholders or prior digests.
+awk -v version="$version" -v s0="${sums[0]}" -v s1="${sums[1]}" \
+    -v s2="${sums[2]}" -v s3="${sums[3]}" '
+  /version "/ { sub(/version "[^"]*"/, "version \"" version "\"") }
+  /sha256 / {
+    i++
+    sub(/sha256 "[^"]*"/, "sha256 \"" (i == 1 ? s0 : i == 2 ? s1 : i == 3 ? s2 : s3) "\"")
+  }
+  { print }
+' "$formula" > "$tmpdir/sweep.rb"
+
+mv "$tmpdir/sweep.rb" "$formula"
+echo "updated $formula to $version"
+grep -nE 'version|url |sha256' "$formula"
