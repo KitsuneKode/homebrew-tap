@@ -1,7 +1,7 @@
 class Sweep < Formula
   desc "Artifact cleanup for project trees - scan, review, and reclaim disk space"
   homepage "https://github.com/KitsuneKode/sweep"
-  version "0.5.0"
+  version "0.5.1"
   license "MIT"
 
   # Regenerate digests with: bin/update-formula <version>
@@ -10,22 +10,22 @@ class Sweep < Formula
   on_macos do
     on_arm do
       url "https://github.com/KitsuneKode/sweep/releases/download/v#{version}/sweep-darwin-arm64"
-      sha256 "79413ecd0934e8b8441d17fea1ebc90813f7d1020c19a372a9a084cc028ccf36"
+      sha256 "af79ba68e63677df7a07d690ef72ac3952b1e5bd2ace35a2676b5ff63eff77e5"
     end
     on_intel do
       url "https://github.com/KitsuneKode/sweep/releases/download/v#{version}/sweep-darwin-x64"
-      sha256 "780398361547ec7f220c6ea6b46d0981176c7bd6d2800bc297ae067883512557"
+      sha256 "aa157e38256e61dff09f0edd86014b4c7a66d55cf1ee2c326b5fdf84587fcd0a"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/KitsuneKode/sweep/releases/download/v#{version}/sweep-linux-arm64"
-      sha256 "2e28e09792f311c6874d8bf7955965735b1e04fae75a2713b423f9ca439483d7"
+      sha256 "c86f7dcf8a2c93300a9992cf6d78b47901b9c09ef89aff0446afd264bed4334a"
     end
     on_intel do
       url "https://github.com/KitsuneKode/sweep/releases/download/v#{version}/sweep-linux-x64"
-      sha256 "60b051b69a5dab1875cf4f54e604389736fd374329e955b81d8ab5e4d1c7d438"
+      sha256 "a4693c92509c7c37f642b85e2eeb0dd9e910afad19f6d0d79d534222e4d08ac4"
     end
   end
 
